@@ -14,15 +14,15 @@ install_test() {
 #			echo "系统不具备安装条件，建议安装 debian_x64"
 #			echo 
 #		fi
-		if [ ! -z "`cat /etc/issue | grep bian`" ];then
-			if [ ! -z "`uname -a | grep x86_64`" ];then
-				echo "系统版本符合要求"
+			if [ ! -z "`cat /etc/issue | grep bian`" ];then
+				if [ ! -z "`uname -a | grep x86_64`" ];then
+						echo "系统版本符合要求"
+					else
+						echo "系统不具备安装条件。建议安装debian_x64"
+				fi
 				else
-				echo "系统不具备安装条件。建议安装debian_x64"
+					echo "系统不具备安装条件。建议安装debian_x64"
 			fi
-			else
-			echo "系统不具备安装条件。建议安装debian_x64"
-		fi
 	echo 
 	echo "1、检查目录是否存在"
 	echo
@@ -75,15 +75,33 @@ install_test() {
 install() {
 #	echo "install v2ray_version=$version"
 #	wget -q -O latest https://github.com/v2ray/v2ray-core/releases/latest
-#	version=$(cat latest | grep 'Release v'| awk '{printf $2}')
-	version=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases/latest | grep 'Release v'| awk '{printf $2}')
-	echo "install v2ray_version=$version"
-	echo $version
-	wget https://github.com/v2ray/v2ray-core/releases/download/$version/v2ray-linux-64.zip
-	unzip -d /home/v2ray/ v2ray-linux-64.zip
-	cp /home/v2ray/*/v2ray /home/v2ray/
-	chmod +x /home/v2ray/v2ray
-	uuid=$(cat /proc/sys/kernel/random/uuid)
+#	versions=$(cat latest | grep 'Release v'| awk '{printf $2}')
+	versions=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases | grep 'releases/tag/v' | awk  -F '[/"]' '{print $7}')  #作用：获取版本列表。参数说明 "-q" quiet选项以关闭wget输出 "-" 将输出转储到标准输出 "-O" 文件另存为，awk参数 -F 定义多个分隔符此处分隔符方括号内的内容[/"]
+	clear
+#	versions=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases/latest | grep 'Release v'| awk '{printf $2}')
+#	echo "请选择安装的版本"
+#	echo "install v2ray_version=$version"
+	echo "$versions
+	"
+	read -p "请输入需要安装的版本：" version
+#		case $version in
+		result=$( echo "$versions" | grep "$version" )
+			if [[ "$result" == $version ]]; then
+				wget https://github.com/v2ray/v2ray-core/releases/download/$version/v2ray-linux-64.zip
+				unzip -d /home/v2ray/ v2ray-linux-64.zip
+				cp /home/v2ray/*/v2ray /home/v2ray/
+				chmod +x /home/v2ray/v2ray
+				uuid=$(cat /proc/sys/kernel/random/uuid)
+			else
+				echo "------------"
+				echo "请重新运行并输入正确的符号和数值 e.g:v2.30"
+				exit
+			fi
+#	wget https://github.com/v2ray/v2ray-core/releases/download/$version/v2ray-linux-64.zip
+#	unzip -d /home/v2ray/ v2ray-linux-64.zip
+#	cp /home/v2ray/*/v2ray /home/v2ray/
+#	chmod +x /home/v2ray/v2ray
+#	uuid=$(cat /proc/sys/kernel/random/uuid)
 	exit 1
 }
 update() {
@@ -110,6 +128,7 @@ do
 		2)update;;
 		3)uninstall;;
 		4)exit;;
-		*)echo "请输入正确的序列号"
+		*)echo "------------" 
+		  echo "请输入正确的序列号"
 	esac
 done
