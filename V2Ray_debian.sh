@@ -1,44 +1,89 @@
 #!/bin/bash
 install_test() {
-	echo "以下是检查结果"
 	echo "----------------------------"
+	echo "以下是检查结果"
+	echo 
+	echo "0、判断系统版本"
+	echo 
+#		if
+#		cat /etc/os-release |grep debian > /dev/null 2>&1
+#		uname -a | grep x86_64 > /dev/null 2>&1
+#		then
+#			echo "系统具备安装条件"
+#		else
+#			echo "系统不具备安装条件，建议安装 debian_x64"
+#			echo 
+#		fi
+		if [ ! -z "`cat /etc/issue | grep bian`" ];then
+			if [ ! -z "`uname -a | grep x86_64`" ];then
+				echo "系统版本符合要求"
+				else
+				echo "系统不具备安装条件。建议安装debian_x64"
+			fi
+			else
+			echo "系统不具备安装条件。建议安装debian_x64"
+		fi
+	echo 
 	echo "1、检查目录是否存在"
 	echo
-	        if [ ! -d /home/v2ray ]; then
-				mkdir /home/v2ray
+	        if [ ! -d ./v2ray ]; then
+		       mkdir ./v2ray
 	       else
-				echo "路径'/root/'存在'v2ray'文件夹,已经将其重命名 v2ray.back"
-				mv /home/v2ray /home/v2ray.back
-				mkdir /home/v2ray	
-			fi
+			echo "路径'/root/'存在'v2ray'文件夹,已经将其重命名 v2ray.back"
+		  	mv ./v2ray ./v2ray.back
+			mkdir ./v2ray1	
+		fi	
 	echo
 	echo "2、检查 是否安装 unzip"
 	echo 
 		if  command -v unzip --help > /dev/null 2>&1;then
-			echo "unzip正常"
+			echo "unzip 已经存在"
 		else
 			echo "需要安装 unzip"
 			read -p "是否 安装 'unzip' ？[y/n]: " unzip
 				[ -z "$unzip" ] && unzip='y'
 			if [[ $unzip == 'y' ]];then
-				echo "apt-get install unzip -y"
+				echo "unzip install"
+				apt-get install unzip -y
 			fi	
 		fi
 	echo
 	echo "3、检查 'wget' 是否安装"
 	echo
 		if  command -v wget --help > /dev/null 2>&1;then
-			echo "wget正常"
+			echo "wget 已经存在"
 		else
 			echo "需要安装 wget"
 			read -p "是否 安装 'wget' ？[y/n]: " wget
 				[ -z "$wget" ] && wget='y'
 			if [[ $wget == 'y' ]];then
-				echo "apt-get install wget -y"
+				echo "wget install"
+				apt-get install wget -y
 			fi
-
+#		if [ -n $unzip $wget ];then
+#			read -p "是否 安装 $unzip $wget ?[y/n]: " installxx
+#				[ -z "$installxx" ] && installxx='y'
+#	                        if [[ $installxx == 'y' ]];then
+#					echo "$wget $unzip"
+#				fi
+#
+#		else
+#			echo 
+#			echo "可以安装v2ray"
 		fi
-
+}
+install() {
+#	echo "install v2ray_version=$version"
+#	wget -q -O latest https://github.com/v2ray/v2ray-core/releases/latest
+#	version=$(cat latest | grep 'Release v'| awk '{printf $2}')
+	version=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases/latest | grep 'Release v'| awk '{printf $2}')
+	echo "install v2ray_version=$version"
+	echo $version
+	wget https://github.com/v2ray/v2ray-core/releases/download/$version/v2ray-linux-64.zip
+	unzip -d /home/v2ray/ v2ray-linux-64.zip
+	cp /home/v2ray/*/v2ray /home/v2ray/
+	chmod +x /home/v2ray/v2ray
+	uuid=$(cat /proc/sys/kernel/random/uuid)
 	exit 1
 }
 update() {
