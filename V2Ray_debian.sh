@@ -1,4 +1,7 @@
 #!/bin/bash
+export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+#
+#
 install_test() {
 	echo "----------------------------"
 	echo "以下是检查结果"
@@ -105,7 +108,25 @@ install() {
 	exit 1
 }
 update() {
-	echo "update"
+	echo "正在检查..."
+#	wget -q -O - latest https://github.com/v2ray/v2ray-core/releases/latest
+	versionnew=$(wget -q -O - latest https://github.com/v2ray/v2ray-core/releases/latest | grep 'Release v'| awk '{printf $2}')
+	versionold=$(/home/v2ray/v2ray -version | grep V2Ray | awk '{print $2}')
+	if [[ "$versionnew" == $versionold ]]; then
+		echo "已经是最新版本"
+		else
+			echo "发现新版本"
+			read -p "更新到最新版本--$versionnew [y/n]？" new
+			 [ -z "$new" ] && wget='y'
+			if [[ $new == 'y' ]];then
+				echo "正在更新..."
+				wget https://github.com/v2ray/v2ray-core/releases/download/$versionnew/v2ray-linux-64.zip
+				unzip -d /home/v2ray/ v2ray-linux-64.zip
+				cp /home/v2ray/*/v2ray /home/v2ray/
+				chmod +x /home/v2ray/v2ray
+				echo "更新完成，请重新启动 'v2ray'"
+			fi
+		fi
 	exit 1
 }
 uninstall() {
@@ -121,8 +142,8 @@ do
 	echo "3:卸载"
 	echo "4:退出"
 	echo 
-	read -p "请输入序列号: " input
-	case $input in 
+	read -p "请输入序列号: " put
+	case $put in 
 		0)install_test;;
 		1)install;;
 		2)update;;
