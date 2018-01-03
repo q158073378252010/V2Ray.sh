@@ -79,7 +79,10 @@ install() {
 #	echo "install v2ray_version=$version"
 #	wget -q -O latest https://github.com/v2ray/v2ray-core/releases/latest
 #	versions=$(cat latest | grep 'Release v'| awk '{printf $2}')
-	versions=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases | grep 'releases/tag/v' | awk  -F '[/"]' '{print $7}')  #作用：获取版本列表。参数说明 "-q" quiet选项以关闭wget输出 "-" 将输出转储到标准输出 "-O" 文件另存为，awk参数 -F 定义多个分隔符此处分隔符方括号内的内容[/"]
+#	使用地址 https://github.com/v2ray/v2ray-core/releases 不完善可能获取到非稳定版
+#	versions=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases | grep 'releases/tag/v' | awk  -F '[/"]' '{print $7}')  #作用：获取版本列表。参数说明 "-q" quiet选项以关闭wget输出 "-" 将输出转储到标准输出 "-O" 文件另存为，awk参数 -F 定义多个分隔符此处分隔符方括号内的内容[/"]
+	
+	versions=$(wget -q -O - https://github.com/v2ray/v2ray-core/tags | grep 'Read release notes' | awk  -F '[/"]' '{print $7}')  #作用：获取版本列表。参数说明 "-q" quiet选项以关闭wget输出 "-" 将输出转储到标准输出 "-O" 文件另存为，awk参数 -F 定义多个分隔符此处分隔符方括号内的内容[/"]
 	clear
 #	versions=$(wget -q -O - https://github.com/v2ray/v2ray-core/releases/latest | grep 'Release v'| awk '{printf $2}')
 #	echo "请选择安装的版本"
