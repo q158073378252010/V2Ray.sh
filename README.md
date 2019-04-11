@@ -1,5 +1,5 @@
-# V2Ray.sh
-https://github.com/FunctionClub/V2ray-Bash  搜索缓存
+# V2Ray.sh （ 注：该脚本已过时 ）
+https://github.com/FunctionClub/V2ray-Bash  搜索缓存
 
 简介
 
